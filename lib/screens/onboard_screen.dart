@@ -13,7 +13,7 @@ class OnBoardScreen extends StatefulWidget {
 }
 
 final _controller = PageController(
-  initialPage: 1,
+  initialPage: 0,
 );
 
 int _currentPage = 0;
