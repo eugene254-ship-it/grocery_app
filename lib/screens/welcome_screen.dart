@@ -1,48 +1,85 @@
+// ignore_for_file: must_be_immutable, unused_field, prefer_final_fields
+
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/onboard_screen.dart';
 import 'package:equatable/equatable.dart';
 
 class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
+  bool _validPhoneNumber = false;
 
-  get context => null;
+  WelcomeScreen({super.key});
 
-  void showBottomSheet(content) {
+  void showBottomSheet(context) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'LOGIN',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      builder: (context) => StatefulBuilder(
+        builder: (context, StateSetter myState) {
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'LOGIN',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const Text(
+                  'Enter your phone Number to Proceed',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextField(
+                  decoration: const InputDecoration(
+                    prefixText: '+254',
+                    labelText: '10 digit mobile number',
+                  ),
+                  autofocus: true,
+                  keyboardType: TextInputType.phone,
+                  maxLength: 9,
+                  onChanged: (value) {
+                    if (value.length == 9) {
+                      myState(() {
+                        _validPhoneNumber = true;
+                      });
+                    } else {
+                      myState(() {
+                        _validPhoneNumber = false;
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: AbsorbPointer(
+                        absorbing: _validPhoneNumber ? false : true,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: _validPhoneNumber
+                                ? Theme.of(context).primaryColor
+                                : Colors.blueGrey,
+                          ),
+                          child: Text(
+                            _validPhoneNumber
+                                ? 'CONTINUE'
+                                : 'ENTER PHONE NUMBER',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {},
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const Text(
-              'Enter your phone Number to Proceed',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            const TextField(
-              decoration: InputDecoration(
-                prefixText: '+254',
-                labelText: '10 digit mobile number',
-              ),
-              autofocus: true,
-              keyboardType: TextInputType.phone,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TextButton(
-              child: const Text('ENTER PHONE NUMBER'),
-              onPressed: () {},
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -91,9 +128,6 @@ class WelcomeScreen extends StatelessWidget {
                   height: 20,
                 ),
                 TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.deepOrangeAccent,
-                  ),
                   onPressed: () {
                     showBottomSheet(context);
                   },
