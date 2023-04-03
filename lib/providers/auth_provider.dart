@@ -25,11 +25,10 @@ class AuthProvider with ChangeNotifier {
       }
     }
 
-    final PhoneCodeSent smsOtpSend = (String verId, int resendToken) async {
+    smsOtpSend(String verId, int? resendToken) {
       verificationId = verId;
-
       smsOtpDialog(context, number);
-    } as PhoneCodeSent;
+    }
 
     try {
       _auth.verifyPhoneNumber(
@@ -95,9 +94,7 @@ class AuthProvider with ChangeNotifier {
                       Navigator.of(context).pop();
 
                       // ignore: use_build_context_synchronously
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => const HomeScreen(),
-                      ));
+                      Navigator.pushReplacementNamed(context, HomeScreen.id);
                     } else {
                       if (kDebugMode) {
                         print('Login Failed');
@@ -105,6 +102,7 @@ class AuthProvider with ChangeNotifier {
                     }
                   } catch (e) {
                     error = 'Invalid OTP';
+                    notifyListeners();
                     if (kDebugMode) {
                       print(e.toString());
                     }

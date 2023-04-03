@@ -1,8 +1,11 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:grocery_app/providers/auth_provider.dart';
 import 'package:grocery_app/screens/homeScreen.dart';
+import 'package:grocery_app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
@@ -33,61 +36,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(primaryColor: Colors.deepOrangeAccent),
-      home: const SplashScreen(),
-    );
-  }
-}
-
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _SplashScreenState createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    Timer(
-        const Duration(
-          seconds: 1,
-        ), () {
-      FirebaseAuth.instance.authStateChanges().listen((User user) {
-            if (user == null) {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const WelcomeScreen(),
-                  ));
-            } else {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
-                  ));
-            }
-          } as void Function(User? event)?);
-    });
-
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset('images/logo.png'),
-            const Text(
-              'Grocery Store',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
+      initialRoute: SplashScreen.id,
+      routes: {
+        SplashScreen.id: (context) => const SplashScreen(),
+        HomeScreen.id: (context) => const HomeScreen(),
+        WelcomeScreen.id: (context) => const WelcomeScreen(),
+      },
     );
   }
 }

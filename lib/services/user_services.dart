@@ -15,13 +15,12 @@ class UserServices {
 
   //Update User Data
   Future<void> updateUserData(String id, Map<String, dynamic> values) async {
-    String id = values['id'];
     await firestore.collection(collection).doc(id).update(values);
   }
 
   //Get User By ID
-  Future<void> getUserData(String id) async {
-    await firestore.collection(collection).doc(id).get().then((doc) {
+  Future<UserModel?> getUserById(String id) async {
+    return await firestore.collection(collection).doc(id).get().then((doc) {
       if (doc.data() == null) {
         return null;
       }

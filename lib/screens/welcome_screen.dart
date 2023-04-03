@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable, unused_field, prefer_final_fields
-
 import 'package:flutter/material.dart';
 import 'package:grocery_app/providers/auth_provider.dart';
 import 'package:grocery_app/screens/onboard_screen.dart';
@@ -7,14 +5,17 @@ import 'package:equatable/equatable.dart';
 import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
+  const WelcomeScreen({Key? key}) : super(key: key);
+  static const String id = 'welcome-screen';
 
   @override
   Widget build(BuildContext context) {
+    //Debug this
     final auth = Provider.of<AuthProvider>(context);
 
     bool validPhoneNumber = false;
     var phoneNumberController = TextEditingController();
+
     void showBottomSheet(context) {
       showModalBottomSheet(
         context: context,
@@ -25,6 +26,21 @@ class WelcomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Visibility(
+                    visible: auth.error == 'Invalid OTP' ? true : false,
+                    child: Column(
+                      children: [
+                        Text(
+                          auth.error,
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                        const SizedBox(
+                          height: 3,
+                        ),
+                      ],
+                    ),
+                  ),
                   const Text(
                     'LOGIN',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -79,8 +95,10 @@ class WelcomeScreen extends StatelessWidget {
                             ),
                             onPressed: () {
                               String number =
-                                  '+91${phoneNumberController.text}';
-                              auth.verifyPhone(context, number);
+                                  '+254${phoneNumberController.text}';
+                              auth.verifyPhone(context, number).then((value) {
+                                phoneNumberController.clear();
+                              });
                             },
                           ),
                         ),
