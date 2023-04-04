@@ -2,6 +2,7 @@
     package="com.ginsky.grocery_app">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET" /> 
    <application
         android:label="grocery_app"
@@ -33,7 +34,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-         <meta-data android:name="com.google.android.geo.AIzaSyCiljnkZAzP74P7HylOsJ3r7XYu-pOyjTg"
-               android:value="AIzaSyCiljnkZAzP74P7HylOsJ3r7XYu-pOyjTg"/>
+         <meta-data android:name="com.google.android.geo.AIzaSyDwbcTdK3J719w4649HimwE7ayYxTzIH3g"
+               android:value="AIzaSyDwbcTdK3J719w4649HimwE7ayYxTzIH3g"/>
     </application>
 </manifest>

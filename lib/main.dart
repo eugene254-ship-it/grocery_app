@@ -10,6 +10,7 @@ import 'package:grocery_app/screens/map_screen.dart';
 import 'package:grocery_app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/welcome_screen.dart';
 

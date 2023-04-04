@@ -47,30 +47,30 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDMpRp0IqkngLEl0esJdX0hX9yYYhDxV1E',
-    appId: '1:730046956116:web:e58f909aafdd931af5e3c1',
-    messagingSenderId: '730046956116',
-    projectId: 'groceryapp-ee558',
-    authDomain: 'groceryapp-ee558.firebaseapp.com',
-    storageBucket: 'groceryapp-ee558.appspot.com',
-    measurementId: 'G-0PPG2DBDP6',
+    apiKey: 'AIzaSyDKqnIEYOhHTuNhKmIqEUEOk5kO4XyCi7w',
+    appId: '1:346703726535:web:80ff01436364c49257fbe2',
+    messagingSenderId: '346703726535',
+    projectId: 'groceryapp-b7447',
+    authDomain: 'groceryapp-b7447.firebaseapp.com',
+    storageBucket: 'groceryapp-b7447.appspot.com',
+    measurementId: 'G-5RBEGRFG4L',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAcLD8O0sNYMRr_HWBCJUbGO_SMgJRlrFs',
-    appId: '1:730046956116:android:9d81e989ea690e41f5e3c1',
-    messagingSenderId: '730046956116',
-    projectId: 'groceryapp-ee558',
-    storageBucket: 'groceryapp-ee558.appspot.com',
+    apiKey: 'AIzaSyDwbcTdK3J719w4649HimwE7ayYxTzIH3g',
+    appId: '1:346703726535:android:066f3c242d4f4c0557fbe2',
+    messagingSenderId: '346703726535',
+    projectId: 'groceryapp-b7447',
+    storageBucket: 'groceryapp-b7447.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDr5WhVuB-11FAFIq5GynevHiO-z2UlCb8',
-    appId: '1:730046956116:ios:8c650229e0a10e2ff5e3c1',
-    messagingSenderId: '730046956116',
-    projectId: 'groceryapp-ee558',
-    storageBucket: 'groceryapp-ee558.appspot.com',
-    iosClientId: '730046956116-ukk58h33or11q37unhrfnbs63na3v48u.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBwcOJZliGUku9IjXMDFj5h8uzxwX03Ayk',
+    appId: '1:346703726535:ios:38559a940f724ffc57fbe2',
+    messagingSenderId: '346703726535',
+    projectId: 'groceryapp-b7447',
+    storageBucket: 'groceryapp-b7447.appspot.com',
+    iosClientId: '346703726535-rriqto2svklfngjg37k64icp1pq01utc.apps.googleusercontent.com',
     iosBundleId: 'com.example.groceryApp',
   );
 }

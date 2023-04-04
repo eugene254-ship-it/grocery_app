@@ -77,6 +77,7 @@ class _MapScreenState extends State<MapScreen> {
                 width: MediaQuery.of(context).size.width,
                 color: Colors.white,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     locating
                         ? const LinearProgressIndicator(
@@ -87,11 +88,22 @@ class _MapScreenState extends State<MapScreen> {
                         : Container(),
                     TextButton.icon(
                         onPressed: () {},
-                        icon: const Icon(Icons.location_searching),
+                        icon: const Icon(
+                          Icons.location_searching,
+                          color: Colors.red,
+                        ),
                         label: locating
                             ? const Text('Locating...')
                             : Text(
-                                locationData.selectedAddress?.featureName ?? '',
+                                locating
+                                    ? 'Locating...'
+                                    : locationData
+                                            .selectedAddress?.featureName ??
+                                        '',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.black),
                               )),
                     Text(locationData.selectedAddress?.addressLine ?? ''),
                   ],

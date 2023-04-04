@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -42,7 +43,7 @@ class LocationProvider with ChangeNotifier {
 
   Future<void> getMoveCamera() async {
     if (kDebugMode) {
-      print("${selectedAddress.featureName} : ${selectedAddress.addressLine}");
+      print("${selectedAddress.name} : ${selectedAddress.street}");
     }
   }
 }
