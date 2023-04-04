@@ -16,11 +16,18 @@ class AuthProvider with ChangeNotifier {
   bool loading = false;
 
   Future<void> verifyPhone(BuildContext context, String number) async {
+    loading = true;
+    notifyListeners();
     verificationCompleted(PhoneAuthCredential credential) async {
+      loading = false;
+      notifyListeners();
       await _auth.signInWithCredential(credential);
     }
 
     verificationFailed(FirebaseAuthException e) {
+      error = e.toString();
+      notifyListeners();
+      loading = false;
       if (kDebugMode) {
         print(e.code);
       }
@@ -42,6 +49,8 @@ class AuthProvider with ChangeNotifier {
         },
       );
     } catch (e) {
+      error = e.toString();
+      notifyListeners();
       if (kDebugMode) {
         print(e);
       }

@@ -15,6 +15,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   LatLng? currentLocation;
   late GoogleMapController mapController;
+  bool locating = false;
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +50,16 @@ class _MapScreenState extends State<MapScreen> {
               mapType: MapType.normal,
               mapToolbarEnabled: true,
               onCameraMove: (CameraPosition position) {
+                setState(() {
+                  locating = true;
+                });
                 locationData.onCameraMove(position);
               },
               onMapCreated: onCreated,
               onCameraIdle: () {
+                setState(() {
+                  locating = false;
+                });
                 locationData.getMoveCamera();
               },
             ),
@@ -71,7 +78,21 @@ class _MapScreenState extends State<MapScreen> {
                 color: Colors.white,
                 child: Column(
                   children: [
-                    Text(locationData.selectedAddress?.featureName ?? ''),
+                    locating
+                        ? const LinearProgressIndicator(
+                            backgroundColor: Colors.transparent,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.black),
+                          )
+                        : Container(),
+                    TextButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.location_searching),
+                        label: locating
+                            ? const Text('Locating...')
+                            : Text(
+                                locationData.selectedAddress?.featureName ?? '',
+                              )),
                     Text(locationData.selectedAddress?.addressLine ?? ''),
                   ],
                 ),

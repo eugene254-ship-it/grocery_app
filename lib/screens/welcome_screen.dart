@@ -7,10 +7,15 @@ import 'package:grocery_app/screens/onboard_screen.dart';
 import 'package:equatable/equatable.dart';
 import 'package:provider/provider.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
   static const String id = 'welcome-screen';
 
+  @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     //Debug this
@@ -58,7 +63,7 @@ class WelcomeScreen extends StatelessWidget {
                   TextField(
                     decoration: const InputDecoration(
                       prefixText: '+254',
-                      labelText: '10 digit mobile number',
+                      labelText: '9 digit mobile number',
                     ),
                     autofocus: true,
                     keyboardType: TextInputType.phone,
@@ -85,24 +90,33 @@ class WelcomeScreen extends StatelessWidget {
                         child: AbsorbPointer(
                           absorbing: validPhoneNumber ? false : true,
                           child: TextButton(
+                            onPressed: () {
+                              myState(() {
+                                auth.loading = true;
+                              });
+                              String number =
+                                  '+254${phoneNumberController.text}';
+                              auth.verifyPhone(context, number).then((value) {
+                                phoneNumberController.clear();
+                                auth.loading = false;
+                              });
+                            },
                             style: TextButton.styleFrom(
                               backgroundColor: validPhoneNumber
                                   ? Theme.of(context).primaryColor
                                   : Colors.blueGrey,
                             ),
-                            child: Text(
-                              validPhoneNumber
-                                  ? 'CONTINUE'
-                                  : 'ENTER PHONE NUMBER',
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            onPressed: () {
-                              String number =
-                                  '+254${phoneNumberController.text}';
-                              auth.verifyPhone(context, number).then((value) {
-                                phoneNumberController.clear();
-                              });
-                            },
+                            child: auth.loading
+                                ? const CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                  )
+                                : Text(
+                                    validPhoneNumber
+                                        ? 'CONTINUE'
+                                        : 'ENTER PHONE NUMBER',
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
                           ),
                         ),
                       ),
@@ -150,18 +164,32 @@ class WelcomeScreen extends StatelessWidget {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.deepOrangeAccent,
                   ),
-                  child: const Text(
-                    'SET DELIVERY LOCATION',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  child: locationData.loading
+                      ? const CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        )
+                      : const Text(
+                          'SET DELIVERY LOCATION',
+                          style: TextStyle(color: Colors.white),
+                        ),
                   onPressed: () async {
+                    setState(() {
+                      locationData.loading = true;
+                    });
                     await locationData.getCurrentPosition();
                     if (locationData.permissionAllowed == true) {
                       // ignore: use_build_context_synchronously
                       Navigator.pushReplacementNamed(context, MapScreen.id);
+                      setState(() {
+                        locationData.loading = false;
+                      });
                     } else {
                       if (kDebugMode) {
                         print('permission not allowed');
+                        setState(() {
+                          locationData.loading = false;
+                        });
                       }
                     }
                   },

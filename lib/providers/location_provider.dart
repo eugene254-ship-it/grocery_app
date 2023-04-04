@@ -10,6 +10,7 @@ class LocationProvider with ChangeNotifier {
   bool permissionAllowed = false;
   // ignore: prefer_typing_uninitialized_variables
   var selectedAddress;
+  bool loading = false;
 
   Future<void> getCurrentPosition() async {
     Position position = await Geolocator.getCurrentPosition(
@@ -18,6 +19,12 @@ class LocationProvider with ChangeNotifier {
     if (position != null) {
       latitude = position.latitude;
       longitude = position.longitude;
+
+      final coordinates = LatLng(latitude, longitude);
+      final addresses = await placemarkFromCoordinates(
+          coordinates.latitude, coordinates.longitude);
+      selectedAddress = addresses.first;
+
       permissionAllowed = true;
       notifyListeners();
     } else {
@@ -34,10 +41,6 @@ class LocationProvider with ChangeNotifier {
   }
 
   Future<void> getMoveCamera() async {
-    final coordinates = LatLng(latitude, longitude);
-    final addresses = await placemarkFromCoordinates(
-        coordinates.latitude, coordinates.longitude);
-    selectedAddress = addresses.first;
     if (kDebugMode) {
       print("${selectedAddress.featureName} : ${selectedAddress.addressLine}");
     }
