@@ -4,7 +4,9 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:grocery_app/providers/auth_provider.dart';
+import 'package:grocery_app/providers/location_provider.dart';
 import 'package:grocery_app/screens/homeScreen.dart';
+import 'package:grocery_app/screens/map_screen.dart';
 import 'package:grocery_app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
@@ -21,7 +23,10 @@ void main() async {
       providers: [
         ChangeNotifierProvider(
           create: (_) => AuthProvider(),
-        )
+        ),
+        ChangeNotifierProvider(
+          create: (_) => LocationProvider(),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -41,6 +46,7 @@ class MyApp extends StatelessWidget {
         SplashScreen.id: (context) => const SplashScreen(),
         HomeScreen.id: (context) => const HomeScreen(),
         WelcomeScreen.id: (context) => const WelcomeScreen(),
+        MapScreen.id: (context) => const MapScreen(),
       },
     );
   }

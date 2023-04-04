@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/providers/auth_provider.dart';
+import 'package:grocery_app/providers/location_provider.dart';
+import 'package:grocery_app/screens/map_screen.dart';
 import 'package:grocery_app/screens/onboard_screen.dart';
 import 'package:equatable/equatable.dart';
 import 'package:provider/provider.dart';
@@ -113,6 +116,8 @@ class WelcomeScreen extends StatelessWidget {
       );
     }
 
+    final locationData = Provider.of<LocationProvider>(context, listen: false);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -149,7 +154,17 @@ class WelcomeScreen extends StatelessWidget {
                     'SET DELIVERY LOCATION',
                     style: TextStyle(color: Colors.white),
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    await locationData.getCurrentPosition();
+                    if (locationData.permissionAllowed == true) {
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushReplacementNamed(context, MapScreen.id);
+                    } else {
+                      if (kDebugMode) {
+                        print('permission not allowed');
+                      }
+                    }
+                  },
                 ),
                 const SizedBox(
                   height: 20,

@@ -13,6 +13,7 @@ class AuthProvider with ChangeNotifier {
   late String verificationId;
   String error = '';
   final UserServices _userServices = UserServices();
+  bool loading = false;
 
   Future<void> verifyPhone(BuildContext context, String number) async {
     verificationCompleted(PhoneAuthCredential credential) async {
