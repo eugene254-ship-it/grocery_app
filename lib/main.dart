@@ -1,7 +1,5 @@
 // ignore_for_file: unnecessary_null_comparison
 
-import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:grocery_app/providers/auth_provider.dart';
 import 'package:grocery_app/providers/location_provider.dart';
@@ -10,7 +8,6 @@ import 'package:grocery_app/screens/map_screen.dart';
 import 'package:grocery_app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/welcome_screen.dart';
 
