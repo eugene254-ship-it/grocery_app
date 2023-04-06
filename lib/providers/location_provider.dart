@@ -21,9 +21,7 @@ class LocationProvider with ChangeNotifier {
       latitude = position.latitude;
       longitude = position.longitude;
 
-      final coordinates = LatLng(latitude, longitude);
-      final addresses = await placemarkFromCoordinates(
-          coordinates.latitude, coordinates.longitude);
+      final addresses = await placemarkFromCoordinates(latitude, longitude);
       selectedAddress = addresses.first;
 
       permissionAllowed = true;
@@ -43,7 +41,7 @@ class LocationProvider with ChangeNotifier {
 
   Future<void> getMoveCamera() async {
     if (kDebugMode) {
-      print("${selectedAddress.name} : ${selectedAddress.street}");
+      print("${selectedAddress.featureName} : ${selectedAddress.addressLine}");
     }
   }
 }

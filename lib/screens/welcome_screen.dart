@@ -96,7 +96,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               });
                               String number =
                                   '+254${phoneNumberController.text}';
-                              auth.verifyPhone(context, number).then((value) {
+                              auth
+                                  .verifyPhone(
+                                      context: context,
+                                      number: number,
+                                      latitude: null,
+                                      longitude: null,
+                                      address: null)
+                                  .then((value) {
                                 phoneNumberController.clear();
                                 auth.loading = false;
                               });

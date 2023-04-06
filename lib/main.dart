@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:grocery_app/providers/auth_provider.dart';
 import 'package:grocery_app/providers/location_provider.dart';
 import 'package:grocery_app/screens/homeScreen.dart';
+import 'package:grocery_app/screens/login_screen.dart';
 import 'package:grocery_app/screens/map_screen.dart';
 import 'package:grocery_app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         HomeScreen.id: (context) => const HomeScreen(),
         WelcomeScreen.id: (context) => const WelcomeScreen(),
         MapScreen.id: (context) => const MapScreen(),
+        LoginScreen.id: (context) => LoginScreen(),
       },
     );
   }

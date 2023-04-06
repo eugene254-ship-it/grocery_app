@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_app/providers/location_provider.dart';
 import 'package:grocery_app/services/user_services.dart';
 import 'package:geocoding/geocoding.dart';
 
@@ -15,8 +17,14 @@ class AuthProvider with ChangeNotifier {
   String error = '';
   final UserServices _userServices = UserServices();
   bool loading = false;
+  LocationProvider locationData = LocationProvider();
 
-  Future<void> verifyPhone(BuildContext context, String number) async {
+  Future<void> verifyPhone(
+      {BuildContext? context,
+      String? number,
+      double? latitude,
+      double? longitude,
+      String? address}) async {
     loading = true;
     notifyListeners();
     verificationCompleted(PhoneAuthCredential credential) async {
@@ -36,7 +44,7 @@ class AuthProvider with ChangeNotifier {
 
     smsOtpSend(String verId, int? resendToken) {
       verificationId = verId;
-      smsOtpDialog(context, number);
+      smsOtpDialog(context!, number!, latitude!, longitude!, address!);
     }
 
     try {
@@ -58,7 +66,8 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future smsOtpDialog(BuildContext context, String number) {
+  Future smsOtpDialog(BuildContext context, String number, double latitude,
+      double longitude, String address) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -97,9 +106,28 @@ class AuthProvider with ChangeNotifier {
                     final User? user =
                         (await _auth.signInWithCredential(phoneAuthCredential))
                             .user;
-                    //create user data
-                    _createUser(id: user?.uid, number: user?.phoneNumber);
-                    //navigate
+
+                    if (locationData.selectedAddress != null) {
+                      updateUser(
+                          id: user!.uid,
+                          number: user.phoneNumber,
+                          latitude: locationData.latitude,
+                          longitude: locationData.longitude,
+                          address: locationData.selectedAddress.addressLine);
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushNamed(context, HomeScreen.id);
+                    } else {
+                      //create user data in firestore
+                      _createUser(
+                          id: user!.uid,
+                          number: user.phoneNumber,
+                          latitude: latitude,
+                          longitude: longitude,
+                          address: address);
+                      //navigate
+                    }
+
+                    // ignore: unnecessary_null_comparison
                     if (user != null) {
                       // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
@@ -127,10 +155,35 @@ class AuthProvider with ChangeNotifier {
         });
   }
 
-  void _createUser({String? id, String? number}) {
+  void _createUser(
+      {String? id,
+      String? number,
+      double? latitude,
+      double? longitude,
+      String? address}) {
     _userServices.createUserData({
       'id': id,
       'number': number,
+      'location': GeoPoint(latitude!, longitude!),
+      'address': address,
     });
+    loading = false;
+    notifyListeners();
+  }
+
+  void updateUser(
+      {String? id,
+      String? number,
+      double? latitude,
+      double? longitude,
+      String? address}) {
+    _userServices.updateUserData({
+      'id': id,
+      'number': number,
+      'location': GeoPoint(latitude!, longitude!),
+      'address': address
+    });
+    loading = false;
+    notifyListeners();
   }
 }
