@@ -1,29 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
-
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LocationProvider with ChangeNotifier {
-  double latitude = 0.0;
-  double longitude = 0.0;
+  late double latitude = 0.0;
+  late double longitude = 0.0;
   bool permissionAllowed = false;
-  // ignore: prefer_typing_uninitialized_variables
-  var selectedAddress;
+  Placemark? selectedAddress;
   bool loading = false;
 
   Future<void> getCurrentPosition() async {
-    Position position = await Geolocator.getCurrentPosition(
+    Position? position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     // ignore: unnecessary_null_comparison
     if (position != null) {
       latitude = position.latitude;
       longitude = position.longitude;
 
-      final addresses =
+      List<Placemark> placemarks =
           await placemarkFromCoordinates(position.latitude, position.longitude);
-      selectedAddress = addresses.first;
+      selectedAddress = placemarks.first;
 
       permissionAllowed = true;
       notifyListeners();
@@ -42,14 +40,16 @@ class LocationProvider with ChangeNotifier {
 
   Future<void> getMoveCamera() async {
     if (selectedAddress != null) {
-      final addresses = await placemarkFromAddress(
+      List<Location> addresses = await locationFromAddress(
           '1600 Amphitheatre Parkway, Mountain View, CA');
-      final selectedAddress = addresses.first;
+      Location selectedLocation = addresses.first;
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          selectedLocation.latitude, selectedLocation.longitude);
+      selectedAddress = placemarks.first;
+
       if (kDebugMode) {
-        print("${selectedAddress.featureName} : ${selectedAddress.address}");
+        print("${selectedAddress!.name} : ${selectedAddress!.street}");
       }
     }
   }
-
-  placemarkFromAddress(String s) {}
 }

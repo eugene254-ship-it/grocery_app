@@ -117,7 +117,7 @@ class _MapScreenState extends State<MapScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    locating
+                    locationData.loading
                         ? const LinearProgressIndicator(
                             backgroundColor: Colors.transparent,
                             valueColor:
@@ -127,28 +127,34 @@ class _MapScreenState extends State<MapScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 10, right: 20),
                       child: TextButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.location_searching,
-                            color: Colors.red,
+                        onPressed: () async {
+                          await locationData.getCurrentPosition();
+                        },
+                        icon: const Icon(
+                          Icons.location_searching,
+                          color: Colors.red,
+                        ),
+                        label: Flexible(
+                          child: Text(
+                            locationData.loading
+                                ? 'Locating....'
+                                : locationData.selectedAddress?.name ??
+                                    'Choose location',
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.black),
                           ),
-                          label: Flexible(
-                            child: Text(
-                              locating
-                                  ? 'Locating....'
-                                  : locationData.selectedAddress.featureName,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black),
-                            ),
-                          )),
+                        ),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 20, right: 20),
                       child: Text(
-                        locating ? '' : locationData.selectedAddress.address,
+                        locationData.loading
+                            ? ''
+                            : locationData.selectedAddress?.street ?? '',
                         style: const TextStyle(color: Colors.black54),
                       ),
                     ),
@@ -157,7 +163,7 @@ class _MapScreenState extends State<MapScreen> {
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width - 40,
                         child: AbsorbPointer(
-                          absorbing: locating ? true : false,
+                          absorbing: locationData.loading,
                           child: TextButton(
                             onPressed: () {
                               if (loggedIn == false) {
@@ -167,7 +173,8 @@ class _MapScreenState extends State<MapScreen> {
                                   auth.latitude = locationData.latitude;
                                   auth.longitude = locationData.longitude;
                                   auth.address =
-                                      locationData.selectedAddress.address;
+                                      locationData.selectedAddress?.street ??
+                                          '';
                                 });
                                 if (kDebugMode) {
                                   print(user!.uid);
@@ -186,7 +193,7 @@ class _MapScreenState extends State<MapScreen> {
                             },
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all<Color>(
-                                locating ? Colors.grey : Colors.red,
+                                locationData.loading ? Colors.grey : Colors.red,
                               ),
                             ),
                             child: const Text(

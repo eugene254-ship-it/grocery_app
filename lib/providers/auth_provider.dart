@@ -22,9 +22,9 @@ class AuthProvider with ChangeNotifier {
   bool loading = false;
   LocationProvider locationData = LocationProvider();
   late String screen;
-  late double latitude;
-  late double longitude;
-  late String address;
+  late double latitude = 0.0;
+  late double longitude = 0.0;
+  late String address = '';
 
   Future<void> verifyPhone({BuildContext? context, String? number}) async {
     loading = true;
