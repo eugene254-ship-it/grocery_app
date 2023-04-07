@@ -97,12 +97,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               String number =
                                   '+254${phoneNumberController.text}';
                               auth
-                                  .verifyPhone(
-                                      context: context,
-                                      number: number,
-                                      latitude: null,
-                                      longitude: null,
-                                      address: null)
+                                  .verifyPhone(context: context, number: number)
                                   .then((value) {
                                 phoneNumberController.clear();
                                 auth.loading = false;
@@ -134,7 +129,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             );
           },
         ),
-      );
+      ).whenComplete(() {
+        setState(() {
+          auth.loading = false;
+          phoneNumberController.clear();
+        });
+      });
     }
 
     final locationData = Provider.of<LocationProvider>(context, listen: false);
@@ -184,21 +184,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     setState(() {
                       locationData.loading = true;
                     });
-                    await locationData.getCurrentPosition();
-                    if (locationData.permissionAllowed == true) {
-                      // ignore: use_build_context_synchronously
-                      Navigator.pushReplacementNamed(context, MapScreen.id);
-                      setState(() {
-                        locationData.loading = false;
-                      });
-                    } else {
-                      if (kDebugMode) {
-                        print('permission not allowed');
-                        setState(() {
-                          locationData.loading = false;
-                        });
-                      }
-                    }
+                    //  await locationData.getCurrentPosition();
+                    //  if (locationData.permissionAllowed == true) {
+                    //    // ignore: use_build_context_synchronously
+                    //    Navigator.pushReplacementNamed(context, MapScreen.id);
+                    //    setState(() {
+                    //      locationData.loading = false;
+                    //     });
+                    //   } else {
+                    //     if (kDebugMode) {
+                    //      print('permission not allowed');
+                    //      setState(() {
+                    //        locationData.loading = false;
+                    //       });
+                    //      }
+                    //    }
                   },
                 ),
                 const SizedBox(
@@ -206,6 +206,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
                 TextButton(
                   onPressed: () {
+                    setState(() {
+                      auth.screen = 'Login';
+                    });
                     showBottomSheet(context);
                   },
                   child: RichText(

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +10,7 @@ import 'package:grocery_app/services/user_services.dart';
 import 'package:geocoding/geocoding.dart';
 
 import '../screens/homeScreen.dart';
+import '../screens/map_screen.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -18,15 +21,15 @@ class AuthProvider with ChangeNotifier {
   final UserServices _userServices = UserServices();
   bool loading = false;
   LocationProvider locationData = LocationProvider();
+  late String screen;
+  late double latitude;
+  late double longitude;
+  late String address;
 
-  Future<void> verifyPhone(
-      {BuildContext? context,
-      String? number,
-      double? latitude,
-      double? longitude,
-      String? address}) async {
+  Future<void> verifyPhone({BuildContext? context, String? number}) async {
     loading = true;
     notifyListeners();
+
     verificationCompleted(PhoneAuthCredential credential) async {
       loading = false;
       notifyListeners();
@@ -44,7 +47,7 @@ class AuthProvider with ChangeNotifier {
 
     smsOtpSend(String verId, int? resendToken) {
       verificationId = verId;
-      smsOtpDialog(context!, number!, latitude!, longitude!, address!);
+      smsOtpDialog(context!, number!);
     }
 
     try {
@@ -59,6 +62,7 @@ class AuthProvider with ChangeNotifier {
       );
     } catch (e) {
       error = e.toString();
+      loading = false;
       notifyListeners();
       if (kDebugMode) {
         print(e);
@@ -66,10 +70,11 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future smsOtpDialog(BuildContext context, String number, double latitude,
-      double longitude, String address) {
+  Future<void> smsOtpDialog(BuildContext context, String number) async {
+    String smsOtp = '';
+    BuildContext dialogContext = context;
     return showDialog(
-        context: context,
+        context: dialogContext,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Column(
@@ -79,7 +84,7 @@ class AuthProvider with ChangeNotifier {
                   height: 6,
                 ),
                 Text(
-                  'Enter 6 digit OTP recieved as SMS',
+                  'Enter 6 digit OTP received as SMS',
                   style: TextStyle(color: Colors.grey),
                 ),
               ],
@@ -107,36 +112,29 @@ class AuthProvider with ChangeNotifier {
                         (await _auth.signInWithCredential(phoneAuthCredential))
                             .user;
 
-                    if (locationData.selectedAddress != null) {
-                      updateUser(
-                          id: user!.uid,
-                          number: user.phoneNumber,
-                          latitude: locationData.latitude,
-                          longitude: locationData.longitude,
-                          address: locationData.selectedAddress.addressLine);
-                      // ignore: use_build_context_synchronously
-                      Navigator.pushNamed(context, HomeScreen.id);
-                    } else {
-                      //create user data in firestore
-                      _createUser(
-                          id: user!.uid,
-                          number: user.phoneNumber,
-                          latitude: latitude,
-                          longitude: longitude,
-                          address: address);
-                      //navigate
-                    }
-
-                    // ignore: unnecessary_null_comparison
                     if (user != null) {
-                      // ignore: use_build_context_synchronously
-                      Navigator.of(context).pop();
+                      loading = false;
+                      notifyListeners();
 
-                      // ignore: use_build_context_synchronously
-                      Navigator.pushReplacementNamed(context, HomeScreen.id);
+                      _userServices.getUserById(user.uid).then((snapShot) {
+                        if (snapShot.exists) {
+                          if (screen == 'Login') {
+                            Navigator.pushReplacementNamed(
+                                dialogContext, HomeScreen.id);
+                          } else {
+                            updateUser(id: user.uid, number: user.phoneNumber);
+                            Navigator.pushReplacementNamed(
+                                dialogContext, HomeScreen.id);
+                          }
+                        } else {
+                          createUser(id: user.uid, number: user.phoneNumber);
+                          Navigator.pushReplacementNamed(
+                              dialogContext, HomeScreen.id);
+                        }
+                      });
                     } else {
                       if (kDebugMode) {
-                        print('Login Failed');
+                        print('Login failed');
                       }
                     }
                   } catch (e) {
@@ -145,45 +143,51 @@ class AuthProvider with ChangeNotifier {
                     if (kDebugMode) {
                       print(e.toString());
                     }
-                    Navigator.of(context).pop();
                   }
+                  Navigator.of(dialogContext).pop();
                 },
                 child: const Text('DONE'),
               ),
             ],
           );
-        });
+        }).whenComplete(() {
+      loading = false;
+      notifyListeners();
+    });
   }
 
-  void _createUser(
-      {String? id,
-      String? number,
-      double? latitude,
-      double? longitude,
-      String? address}) {
+  void createUser({String? id, String? number}) {
     _userServices.createUserData({
       'id': id,
       'number': number,
-      'location': GeoPoint(latitude!, longitude!),
-      'address': address,
-    });
-    loading = false;
-    notifyListeners();
-  }
-
-  void updateUser(
-      {String? id,
-      String? number,
-      double? latitude,
-      double? longitude,
-      String? address}) {
-    _userServices.updateUserData({
-      'id': id,
-      'number': number,
-      'location': GeoPoint(latitude!, longitude!),
+      'latitude': latitude,
+      'longitude': longitude,
       'address': address
     });
     loading = false;
     notifyListeners();
+  }
+
+  Future<bool> updateUser({
+    String? id,
+    String? number,
+  }) async {
+    try {
+      _userServices.updateUserData({
+        'id': id,
+        'number': number,
+        'latitude': latitude,
+        'longitude': longitude,
+        'address': address
+      });
+      loading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error $e');
+      }
+      return false;
+    }
   }
 }

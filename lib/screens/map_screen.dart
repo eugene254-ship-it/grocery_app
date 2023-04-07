@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:grocery_app/providers/location_provider.dart';
+import 'package:grocery_app/screens/homeScreen.dart';
 import 'package:grocery_app/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -100,6 +102,12 @@ class _MapScreenState extends State<MapScreen> {
                 ),
               ),
             ),
+            const Center(
+              child: SpinKitPulse(
+                color: Colors.black54,
+                size: 100.0,
+              ),
+            ),
             Positioned(
               bottom: 0.0,
               child: Container(
@@ -140,9 +148,7 @@ class _MapScreenState extends State<MapScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 20, right: 20),
                       child: Text(
-                        locating
-                            ? ''
-                            : locationData.selectedAddress.addressLine,
+                        locating ? '' : locationData.selectedAddress.address,
                         style: const TextStyle(color: Colors.black54),
                       ),
                     ),
@@ -157,13 +163,25 @@ class _MapScreenState extends State<MapScreen> {
                               if (loggedIn == false) {
                                 Navigator.pushNamed(context, LoginScreen.id);
                               } else {
-                                auth.updateUser(
-                                    id: user!.uid,
-                                    number: user!.phoneNumber,
-                                    latitude: locationData.latitude,
-                                    longitude: locationData.longitude,
-                                    address: locationData
-                                        .selectedAddress.addressLine);
+                                setState(() {
+                                  auth.latitude = locationData.latitude;
+                                  auth.longitude = locationData.longitude;
+                                  auth.address =
+                                      locationData.selectedAddress.address;
+                                });
+                                if (kDebugMode) {
+                                  print(user!.uid);
+                                }
+                                auth
+                                    .updateUser(
+                                  id: user!.uid,
+                                  number: user!.phoneNumber,
+                                )
+                                    .then((value) {
+                                  if (value == true) {
+                                    Navigator.pushNamed(context, HomeScreen.id);
+                                  }
+                                });
                               }
                             },
                             style: ButtonStyle(

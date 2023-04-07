@@ -21,7 +21,8 @@ class LocationProvider with ChangeNotifier {
       latitude = position.latitude;
       longitude = position.longitude;
 
-      final addresses = await placemarkFromCoordinates(latitude, longitude);
+      final addresses =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
       selectedAddress = addresses.first;
 
       permissionAllowed = true;
@@ -33,15 +34,22 @@ class LocationProvider with ChangeNotifier {
     }
   }
 
-  void onCameraMove(CameraPosition cameraPosition) async {
+  void onCameraMove(CameraPosition cameraPosition) {
     latitude = cameraPosition.target.latitude;
     longitude = cameraPosition.target.longitude;
     notifyListeners();
   }
 
   Future<void> getMoveCamera() async {
-    if (kDebugMode) {
-      print("${selectedAddress.featureName} : ${selectedAddress.addressLine}");
+    if (selectedAddress != null) {
+      final addresses = await placemarkFromAddress(
+          '1600 Amphitheatre Parkway, Mountain View, CA');
+      final selectedAddress = addresses.first;
+      if (kDebugMode) {
+        print("${selectedAddress.featureName} : ${selectedAddress.address}");
+      }
     }
   }
+
+  placemarkFromAddress(String s) {}
 }
