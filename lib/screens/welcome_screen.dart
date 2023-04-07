@@ -184,21 +184,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     setState(() {
                       locationData.loading = true;
                     });
-                    //  await locationData.getCurrentPosition();
-                    //  if (locationData.permissionAllowed == true) {
-                    //    // ignore: use_build_context_synchronously
-                    //    Navigator.pushReplacementNamed(context, MapScreen.id);
-                    //    setState(() {
-                    //      locationData.loading = false;
-                    //     });
-                    //   } else {
-                    //     if (kDebugMode) {
-                    //      print('permission not allowed');
-                    //      setState(() {
-                    //        locationData.loading = false;
-                    //       });
-                    //      }
-                    //    }
+                    await locationData.getCurrentPosition();
+                    if (locationData.permissionAllowed == true) {
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushReplacementNamed(context, MapScreen.id);
+                      setState(() {
+                        locationData.loading = false;
+                      });
+                    } else {
+                      if (kDebugMode) {
+                        print('permission not allowed');
+                        setState(() {
+                          locationData.loading = false;
+                        });
+                      }
+                    }
                   },
                 ),
                 const SizedBox(
