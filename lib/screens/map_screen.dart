@@ -166,6 +166,7 @@ class _MapScreenState extends State<MapScreen> {
                           absorbing: locationData.loading,
                           child: TextButton(
                             onPressed: () {
+                              locationData.savePrefs();
                               if (loggedIn == false) {
                                 Navigator.pushNamed(context, LoginScreen.id);
                               } else {

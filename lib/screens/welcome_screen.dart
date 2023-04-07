@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:grocery_app/providers/auth_provider.dart';
 import 'package:grocery_app/providers/location_provider.dart';
 import 'package:grocery_app/screens/map_screen.dart';
 import 'package:grocery_app/screens/onboard_screen.dart';
 import 'package:equatable/equatable.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -44,7 +47,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               const TextStyle(color: Colors.red, fontSize: 12),
                         ),
                         const SizedBox(
-                          height: 3,
+                          height: 5,
                         ),
                       ],
                     ),
@@ -151,7 +154,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 onPressed: () {},
                 child: const Text(
                   'SKIP',
-                  style: TextStyle(color: Colors.deepOrangeAccent),
+                  style: TextStyle(color: Color(0xFF84c225)),
                 ),
               ),
             ),
@@ -169,7 +172,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
-                    backgroundColor: Colors.deepOrangeAccent,
+                    backgroundColor: const Color(0xFF84c225),
                   ),
                   child: locationData.loading
                       ? const CircularProgressIndicator(
@@ -184,20 +187,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     setState(() {
                       locationData.loading = true;
                     });
-                    await locationData.getCurrentPosition();
-                    if (locationData.permissionAllowed == true) {
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    final bool? isAllowed = prefs.getBool('isAllowed');
+                    if (isAllowed == null) {
                       // ignore: use_build_context_synchronously
-                      Navigator.pushReplacementNamed(context, MapScreen.id);
-                      setState(() {
-                        locationData.loading = false;
-                      });
-                    } else {
-                      if (kDebugMode) {
-                        print('permission not allowed');
+                      await requestLocationPermission(
+                          context, locationData, prefs);
+                    } else if (isAllowed == true) {
+                      await locationData.getCurrentPosition();
+                      if (locationData.permissionAllowed == true) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushNamed(context, MapScreen.id);
                         setState(() {
                           locationData.loading = false;
                         });
+                      } else {
+                        if (kDebugMode) {
+                          print('permission not allowed');
+                          setState(() {
+                            locationData.loading = false;
+                          });
+                        }
                       }
+                    } else {
+                      setState(() {
+                        locationData.loading = false;
+                      });
                     }
                   },
                 ),
@@ -231,5 +247,38 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> requestLocationPermission(BuildContext context,
+      LocationProvider locationData, SharedPreferences prefs) async {
+    final LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      await prefs.setBool('isAllowed', false);
+      setState(() {
+        locationData.loading = false;
+      });
+    } else if (permission == LocationPermission.always) {
+      await prefs.setBool('isAllowed', true);
+      await locationData.getCurrentPosition();
+      if (locationData.permissionAllowed == true) {
+        final List<Placemark> placemarks = await placemarkFromCoordinates(
+            locationData.latitude, locationData.longitude);
+        if (placemarks != null && placemarks.isNotEmpty) {
+          locationData.deliveryLocation = placemarks[0];
+        }
+        // ignore: use_build_context_synchronously
+        Navigator.pushNamed(context, MapScreen.id);
+        setState(() {
+          locationData.loading = false;
+        });
+      } else {
+        if (kDebugMode) {
+          print('permission not allowed');
+          setState(() {
+            locationData.loading = false;
+          });
+        }
+      }
+    }
   }
 }

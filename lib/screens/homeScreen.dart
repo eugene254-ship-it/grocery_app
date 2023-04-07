@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
   static const String id = 'home-screen';
-
+//Huge Location Access that needs to be fixed Bug Not Yet Fixed
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
@@ -32,12 +32,12 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: IconButton(
-              icon: const Icon(Icons.account_circle_outlined),
-              onPressed: () {},
+          IconButton(
+            icon: const Icon(
+              Icons.account_circle_outlined,
+              color: Colors.white,
             ),
+            onPressed: () {},
           ),
         ],
         centerTitle: true,

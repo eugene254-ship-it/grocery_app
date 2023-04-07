@@ -48,6 +48,8 @@ dependencies:
   google_sign_in: ^6.0.2
   location: ^4.4.0
   flutter_spinkit: ^5.1.0
+  shared_preferences: ^2.1.0
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +76,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
 assets:
      - images/
+     - images/deliverfood.png
+     - images/Pudge.png
+     - images/deliveryIcon.png
   
   
 fonts:

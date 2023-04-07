@@ -3,13 +3,16 @@ import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationProvider with ChangeNotifier {
-  late double latitude = 0.0;
-  late double longitude = 0.0;
+  late double latitude = -1.310807;
+  late double longitude = 36.812963;
   bool permissionAllowed = false;
   Placemark? selectedAddress;
   bool loading = false;
+
+  set deliveryLocation(Placemark deliveryLocation) {}
 
   Future<void> getCurrentPosition() async {
     Position? position = await Geolocator.getCurrentPosition(
@@ -51,5 +54,13 @@ class LocationProvider with ChangeNotifier {
         print("${selectedAddress!.name} : ${selectedAddress!.street}");
       }
     }
+  }
+
+  Future<void> savePrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('latitude', latitude);
+    prefs.setDouble('longitude', longitude);
+    prefs.setString('address', selectedAddress?.street ?? "");
+    prefs.setString('location', selectedAddress?.name ?? "");
   }
 }

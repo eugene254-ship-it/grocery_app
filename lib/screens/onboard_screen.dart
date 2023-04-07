@@ -12,13 +12,13 @@ class OnBoardScreen extends StatefulWidget {
   _OnBoardScreenState createState() => _OnBoardScreenState();
 }
 
-final _controller = PageController(
+final controller = PageController(
   initialPage: 0,
 );
 
-int _currentPage = 0;
+int currentPage = 0;
 
-List<Widget> _pages = [
+List<Widget> pages = [
   Column(
     children: [
       Expanded(child: Image.asset('images/deliveryicon.png')),
@@ -58,11 +58,11 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
       children: [
         Expanded(
           child: PageView(
-            controller: _controller,
-            children: _pages,
+            controller: controller,
+            children: pages,
             onPageChanged: (index) {
               setState(() {
-                _currentPage = index;
+                currentPage = index;
               });
             },
           ),
@@ -71,14 +71,14 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
           height: 20,
         ),
         DotsIndicator(
-          dotsCount: _pages.length,
-          position: _currentPage.toDouble(),
+          dotsCount: pages.length,
+          position: currentPage.toDouble(),
           decorator: DotsDecorator(
               size: const Size.square(9.0),
               activeSize: const Size(18.0, 9.0),
               activeShape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.0)),
-              activeColor: Colors.deepOrangeAccent),
+              activeColor: const Color(0xFF84c225)),
         ),
         const SizedBox(
           height: 20,
