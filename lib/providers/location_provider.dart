@@ -6,8 +6,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationProvider with ChangeNotifier {
-  late double latitude = -1.310807;
-  late double longitude = 36.812963;
+  double latitude = 0.0;
+  double longitude = 0.0;
   bool permissionAllowed = false;
   Placemark? selectedAddress;
   bool loading = false;

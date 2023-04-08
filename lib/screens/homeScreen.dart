@@ -1,72 +1,54 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/providers/auth_provider.dart';
 import 'package:grocery_app/screens/welcome_screen.dart';
+import 'package:grocery_app/widgets/image_slider.dart';
+import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatelessWidget {
+import '../providers/location_provider.dart';
+import '../widgets/my_appBar.dart';
+import 'map_screen.dart';
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
   static const String id = 'home-screen';
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String location = '';
 //Huge Location Access that needs to be fixed Bug Not Yet Fixed
+  @override
+  void initState() {
+    getPrefs();
+    super.initState();
+  }
+
+  getPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? location = prefs.getString('location');
+    setState(() {
+      location = location;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-        leading: Container(),
-        title: TextButton(
-          onPressed: () {},
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Text(
-                'Delivery Address',
-                style: TextStyle(color: Colors.white),
-              ),
-              Icon(
-                Icons.edit_outlined,
-                color: Colors.white,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.account_circle_outlined,
-              color: Colors.white,
-            ),
-            onPressed: () {},
-          ),
-        ],
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: TextField(
-              decoration: InputDecoration(
-                  hintText: 'Search',
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: Colors.grey,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(3),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: EdgeInsets.zero,
-                  filled: true,
-                  fillColor: Colors.white),
-            ),
-          ),
-        ),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(112),
+        child: MyAppBar(),
       ),
       body: Center(
           child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
+          const ImageSlider(),
           ElevatedButton(
             onPressed: () {
               auth.error = '';

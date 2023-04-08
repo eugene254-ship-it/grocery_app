@@ -97,7 +97,7 @@ class _MapScreenState extends State<MapScreen> {
                 height: 50,
                 margin: const EdgeInsets.only(bottom: 40),
                 child: Image.asset(
-                  'images/pin.png',
+                  'assets/images/pin.png',
                   color: Colors.black,
                 ),
               ),

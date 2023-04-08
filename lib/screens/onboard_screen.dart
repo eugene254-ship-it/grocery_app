@@ -21,7 +21,7 @@ int currentPage = 0;
 List<Widget> pages = [
   Column(
     children: [
-      Expanded(child: Image.asset('images/deliveryicon.png')),
+      Expanded(child: Image.asset('assets/images/deliveryicon.png')),
       const Text(
         'Set Your Delivery Location',
         style: kPageViewTextStyle,
@@ -31,7 +31,8 @@ List<Widget> pages = [
   ),
   Column(
     children: [
-      Expanded(child: Image.asset('images/Pudge.png')),
+      Expanded(
+          child: Image.asset('assets/images/Pudge.png')), // corrected file name
       const Text(
         'Order Online from Your Favourite Store',
         style: kPageViewTextStyle,
@@ -41,7 +42,7 @@ List<Widget> pages = [
   ),
   Column(
     children: [
-      Expanded(child: Image.asset('images/deliverfood.png')),
+      Expanded(child: Image.asset('assets/images/deliverfood.png')),
       const Text(
         'Quick Deliver to your Doorstep',
         style: kPageViewTextStyle,
