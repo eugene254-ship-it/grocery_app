@@ -38,7 +38,7 @@ class _ImageSliderState extends State<ImageSlider> {
             future: getSliderImageFromDb(),
             builder: (_, snapshot) {
               return snapshot.data == null
-                  ? const Center(
+                  ? const Center
                       child: CircularProgressIndicator(),
                     )
                   : Padding(
