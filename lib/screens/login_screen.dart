@@ -8,7 +8,10 @@ import 'homeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login-screen';
+
+  const LoginScreen({super.key});
   @override
+  // ignore: library_private_types_in_public_api
   _LoginScreenState createState() => _LoginScreenState();
 }
 

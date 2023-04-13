@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:grocery_app/providers/location_provider.dart';
 import 'package:grocery_app/screens/homeScreen.dart';
+import 'package:grocery_app/screens/landing_screen.dart';
 import 'package:grocery_app/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -21,7 +22,7 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  LatLng? currentLocation;
+  LatLng? currentLocation = const LatLng(-1.285790, 36.820030);
   late GoogleMapController mapController;
   bool locating = false;
   bool loggedIn = false;
@@ -166,6 +167,7 @@ class _MapScreenState extends State<MapScreen> {
                           absorbing: locationData.loading,
                           child: TextButton(
                             onPressed: () {
+                              //save address in shared Preferences
                               locationData.savePrefs();
                               if (loggedIn == false) {
                                 Navigator.pushNamed(context, LoginScreen.id);
@@ -176,6 +178,8 @@ class _MapScreenState extends State<MapScreen> {
                                   auth.address =
                                       locationData.selectedAddress?.street ??
                                           '';
+                                  auth.location =
+                                      locationData.selectedAddress?.name ?? '';
                                 });
                                 if (kDebugMode) {
                                   print(user!.uid);

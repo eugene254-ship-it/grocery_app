@@ -10,6 +10,7 @@ import 'package:grocery_app/services/user_services.dart';
 import 'package:geocoding/geocoding.dart';
 
 import '../screens/homeScreen.dart';
+import '../screens/landing_screen.dart';
 import '../screens/map_screen.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -25,6 +26,7 @@ class AuthProvider with ChangeNotifier {
   late double latitude = 0.0;
   late double longitude = 0.0;
   late String address = '';
+  late String location = '';
 
   Future<void> verifyPhone({BuildContext? context, String? number}) async {
     loading = true;
@@ -120,7 +122,7 @@ class AuthProvider with ChangeNotifier {
                         if (snapShot.exists) {
                           if (screen == 'Login') {
                             Navigator.pushReplacementNamed(
-                                dialogContext, HomeScreen.id);
+                                dialogContext, LandingScreen.id);
                           } else {
                             updateUser(id: user.uid, number: user.phoneNumber);
                             Navigator.pushReplacementNamed(
@@ -129,7 +131,7 @@ class AuthProvider with ChangeNotifier {
                         } else {
                           createUser(id: user.uid, number: user.phoneNumber);
                           Navigator.pushReplacementNamed(
-                              dialogContext, HomeScreen.id);
+                              dialogContext, LandingScreen.id);
                         }
                       });
                     } else {
@@ -162,7 +164,8 @@ class AuthProvider with ChangeNotifier {
       'number': number,
       'latitude': latitude,
       'longitude': longitude,
-      'address': address
+      'address': address,
+      'location': location
     });
     loading = false;
     notifyListeners();
@@ -178,7 +181,8 @@ class AuthProvider with ChangeNotifier {
         'number': number,
         'latitude': latitude,
         'longitude': longitude,
-        'address': address
+        'address': address,
+        'location': location
       });
       loading = false;
       notifyListeners();

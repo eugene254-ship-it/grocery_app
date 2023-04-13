@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/providers/auth_provider.dart';
+import 'package:grocery_app/screens/top_pick_store.dart';
 import 'package:grocery_app/screens/welcome_screen.dart';
 import 'package:grocery_app/widgets/image_slider.dart';
 import 'package:location/location.dart';
@@ -47,27 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Center(
           child: Column(
-        children: [
-          const ImageSlider(),
-          ElevatedButton(
-            onPressed: () {
-              auth.error = '';
-              FirebaseAuth.instance.signOut().then((value) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const WelcomeScreen(),
-                    ));
-              });
-            },
-            child: const Text('Sign Out'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, WelcomeScreen.id);
-            },
-            child: const Text('HomeScreen'),
-          ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const [
+          ImageSlider(),
+          SizedBox(height: 170, child: TopPickStore()),
         ],
       )),
     );

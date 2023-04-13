@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_app/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,15 +74,33 @@ class _MyAppBarState extends State<MyAppBar> {
               ],
             ),
             Flexible(
+              child: GestureDetector(
+                onTap: () {
+                  // add function to handle onTap event here
+                },
                 child: Text(
-              address,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-            )),
+                  address == null
+                      ? 'Press here to set Delivery Location'
+                      : address,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ),
+            ),
           ],
         ),
       ),
       actions: [
+        IconButton(
+          icon: const Icon(
+            Icons.power_settings_new,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            FirebaseAuth.instance.signOut();
+            Navigator.pushReplacementNamed(context, WelcomeScreen.id);
+          },
+        ),
         IconButton(
           icon: const Icon(
             Icons.account_circle_outlined,
