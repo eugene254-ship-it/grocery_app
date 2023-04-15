@@ -1,7 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
 
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -16,14 +14,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../constants.dart';
 import '../providers/store_provider.dart';
-import 'package:flutterflow_paginate_firestore/bloc/pagination_cubit.dart';
 import 'package:flutterflow_paginate_firestore/bloc/pagination_listeners.dart';
-import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
-import 'package:flutterflow_paginate_firestore/widgets/bottom_loader.dart';
-import 'package:flutterflow_paginate_firestore/widgets/empty_display.dart';
-import 'package:flutterflow_paginate_firestore/widgets/empty_separator.dart';
-import 'package:flutterflow_paginate_firestore/widgets/error_display.dart';
-import 'package:flutterflow_paginate_firestore/widgets/initial_loader.dart';
 
 class NearByStores extends StatefulWidget {
   const NearByStores({super.key});
