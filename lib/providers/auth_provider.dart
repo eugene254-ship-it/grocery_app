@@ -23,10 +23,10 @@ class AuthProvider with ChangeNotifier {
   bool loading = false;
   LocationProvider locationData = LocationProvider();
   late String screen;
-  late double latitude = 0.0;
-  late double longitude = 0.0;
-  late String address = '';
-  late String location = '';
+  double latitude = -1.285790;
+  double longitude = 36.820030;
+  String address = '';
+  String location = '';
 
   Future<void> verifyPhone({BuildContext? context, String? number}) async {
     loading = true;
@@ -121,6 +121,13 @@ class AuthProvider with ChangeNotifier {
                       _userServices.getUserById(user.uid).then((snapShot) {
                         if (snapShot.exists) {
                           if (screen == 'Login') {
+                            // need to check user data
+                            if ((snapShot.data()
+                                    as Map<String, dynamic>)['address'] !=
+                                null) {
+                              Navigator.pushReplacementNamed(
+                                  context, HomeScreen.id);
+                            }
                             Navigator.pushReplacementNamed(
                                 dialogContext, LandingScreen.id);
                           } else {

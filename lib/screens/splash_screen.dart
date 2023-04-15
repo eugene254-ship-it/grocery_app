@@ -4,7 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/landing_screen.dart';
 import 'package:grocery_app/screens/welcome_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../services/user_services.dart';
 import 'homeScreen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -17,6 +19,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  User? user;
+
   @override
   void initState() {
     super.initState();
@@ -25,12 +29,37 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> checkAuthenticationState() async {
-    final user = FirebaseAuth.instance.currentUser;
+    user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       Navigator.pushReplacementNamed(context, WelcomeScreen.id);
     } else {
-      Navigator.pushReplacementNamed(context, LandingScreen.id);
+      getUserData();
     }
+  }
+
+  getUserData() async {
+    UserServices userServices = UserServices();
+    userServices.getUserById(user!.uid).then((result) {
+      // Check Location details
+      if ((result.data() as Map<String, dynamic>)['address'] != null) {
+        // if address details exists
+        updatePrefs(result.data() as Map<String, dynamic>);
+      } else {
+        // if address details does not exist
+        Navigator.pushReplacementNamed(context, LandingScreen.id);
+      }
+    });
+  }
+
+  Future<void> updatePrefs(Map<String, dynamic> result) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('latitude', result['latitude'] as double);
+    prefs.setDouble('longitude', result['longitude'] as double);
+    prefs.setString('address', result['address'] as String);
+    prefs.setString('location', result['location'] as String);
+    //after update prefs
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacementNamed(context, HomeScreen.id);
   }
 
   @override

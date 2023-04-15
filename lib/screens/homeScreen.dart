@@ -1,17 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/providers/auth_provider.dart';
-import 'package:grocery_app/screens/top_pick_store.dart';
-import 'package:grocery_app/screens/welcome_screen.dart';
+import 'package:grocery_app/services/near_by_store.dart';
+import 'package:grocery_app/services/top_pick_store.dart';
 import 'package:grocery_app/widgets/image_slider.dart';
-import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../providers/location_provider.dart';
 import '../widgets/my_appBar.dart';
-import 'map_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -46,14 +41,13 @@ class _HomeScreenState extends State<HomeScreen> {
         preferredSize: Size.fromHeight(112),
         child: MyAppBar(),
       ),
-      body: Center(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
         children: const [
           ImageSlider(),
-          SizedBox(height: 170, child: TopPickStore()),
+          SizedBox(height: 200, child: TopPickStore()),
+          NearByStores(),
         ],
-      )),
+      ),
     );
   }
 }

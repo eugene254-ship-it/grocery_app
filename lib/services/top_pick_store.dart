@@ -4,10 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:grocery_app/providers/store_provider.dart';
 import 'package:grocery_app/screens/welcome_screen.dart';
 import 'package:grocery_app/services/store_services.dart';
-
-import '../services/user_services.dart';
+import 'package:provider/provider.dart';
 
 class TopPickStore extends StatefulWidget {
   const TopPickStore({Key? key}) : super(key: key);
@@ -18,42 +18,19 @@ class TopPickStore extends StatefulWidget {
 
 class _TopPickStoreState extends State<TopPickStore> {
   StoreServices storeServices = StoreServices();
-  UserServices userServices = UserServices();
-  User? user = FirebaseAuth.instance.currentUser;
-  var userLatitude = 0.0;
-  var userLongitude = 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-    if (user != null) {
-      if (mounted) {
-        userServices.getUserById(user!.uid).then((result) {
-          if (result.data() != null) {
-            final data = result.data() as Map<String, dynamic>;
-            setState(() {
-              userLatitude = data['latitude'];
-              userLongitude = data['longitude'];
-            });
-          } else {
-            Navigator.pushReplacementNamed(context, WelcomeScreen.id);
-          }
-        });
-      }
-    } else {
-      Navigator.pushReplacementNamed(context, WelcomeScreen.id);
-    }
-  }
-
-  String getDistance(location) {
-    var distance = Geolocator.distanceBetween(
-        userLatitude, userLongitude, location.latitude, location.longitude);
-    var distanceInKm = distance / 1000; //this will show in kilometer
-    return distanceInKm.toStringAsFixed(2);
-  }
 
   @override
   Widget build(BuildContext context) {
+    final _storeData = Provider.of<StoreProvider>(context);
+    _storeData.getUserLocationData(context);
+
+    String getDistance(location) {
+      var distance = Geolocator.distanceBetween(_storeData.userLatitude,
+          _storeData.userLongitude, location.latitude, location.longitude);
+      var distanceInKm = distance / 1000; //this will show in kilometer
+      return distanceInKm.toStringAsFixed(2);
+    }
+
     return StreamBuilder<QuerySnapshot>(
         stream: storeServices.getTopPickedStore(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapShot) {
@@ -61,8 +38,8 @@ class _TopPickStoreState extends State<TopPickStore> {
           List shopDistance = [];
           for (int i = 0; i < snapShot.data!.docs.length - 1; i++) {
             var distance = Geolocator.distanceBetween(
-                userLatitude,
-                userLongitude,
+                _storeData.userLatitude,
+                _storeData.userLongitude,
                 snapShot.data!.docs[i]['location'].latitude,
                 snapShot.data!.docs[i]['location'].longitude);
             var distanceInKm = distance / 1000;
@@ -70,23 +47,28 @@ class _TopPickStoreState extends State<TopPickStore> {
           }
           shopDistance.sort();
           if (shopDistance[0] > 10) {
-            return Container();
+            return Container(
+              child: const Text('fdfdfdf'),
+            );
           }
           return Padding(
             padding: const EdgeInsets.only(left: 8, right: 8),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    SizedBox(
-                        height: 30,
-                        child: Image.asset('assets/images/like.gif')),
-                    const Text(
-                      'Top Picked Stores For You',
-                      style:
-                          TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10, top: 20),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                          height: 30,
+                          child: Image.asset('assets/images/like.gif')),
+                      const Text(
+                        'Top Picked Stores For You',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w900, fontSize: 18),
+                      ),
+                    ],
+                  ),
                 ),
                 Flexible(
                   child: ListView(

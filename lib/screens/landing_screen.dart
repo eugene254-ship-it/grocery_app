@@ -20,58 +20,7 @@ class LandingScreen extends StatefulWidget {
 
 class _LandingScreenState extends State<LandingScreen> {
   LocationProvider locationProvider = LocationProvider();
-  User? user = FirebaseAuth.instance.currentUser;
-  String? _location;
-  String? _address;
-  bool loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    if (user != null) {
-      UserServices userServices = UserServices();
-      userServices.getUserById(user!.uid).then((result) async {
-        if (result != null) {
-          Map<String, dynamic> data =
-              result.data() as Map<String, dynamic>; // fix is here
-          if (data['latitude'] != null) {
-            getPrefs(result);
-          } else {
-            locationProvider.getCurrentPosition();
-            if (locationProvider.permissionAllowed == true) {
-              Navigator.pushNamed(context, MapScreen.id);
-            } else {
-              if (kDebugMode) {
-                print('Permission not allowed');
-              }
-            }
-          }
-        }
-      });
-    }
-  }
-
-  getPrefs(dbResult) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? location = prefs.getString('location');
-    if (location == null) {
-      prefs.setString('address', dbResult.data()!['address']);
-      prefs.setString(
-          'location', dbResult.data()!['latitude'].toString()); // Fix is here
-      if (mounted) {
-        setState(() {
-          _location = dbResult.data()!['latitude'].toString(); // Fix is here
-          _address = dbResult.data()!['address'];
-          loading = false;
-        });
-      }
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacementNamed(context, HomeScreen.id);
-    } else {
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacementNamed(context, HomeScreen.id);
-    }
-  }
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -80,70 +29,76 @@ class _LandingScreenState extends State<LandingScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(_location == null ? '' : _location!),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Text(
-                _address == null ? 'Delivery Address not set' : _address!,
-                style: const TextStyle(
+                'Delivery Address not set',
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Text(
-                _address == null
-                    ? 'Please update your Delivery Location to find nearest Stores for you'
-                    : _address!,
+                'Please update your Delivery Location to find nearest Stores for you',
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.grey),
+                style: TextStyle(color: Colors.grey),
               ),
             ),
             const CircularProgressIndicator(),
             SizedBox(
                 width: 600,
                 child: Image.asset(
-                  'assets/images/',
+                  'assets/images/city.jpg',
                   fit: BoxFit.fill,
                   color: Colors.black12,
                 )),
-            Visibility(
-              visible: _location != null ? true : false,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                    foregroundColor: Colors.red,
-                    elevation: 2,
-                    backgroundColor: Colors.amber),
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, HomeScreen.id);
-                },
-                child: const Text('Confirm Your Location'),
-              ),
-            ),
             TextButton(
               style: TextButton.styleFrom(
-                  foregroundColor: Colors.red,
-                  elevation: 2,
-                  backgroundColor: Colors.amber),
+                  elevation: 2, backgroundColor: const Color(0xFF84c225)),
               onPressed: () {
-                locationProvider.getCurrentPosition();
-                if (locationProvider.selectedAddress != null) {
-                  Navigator.pushReplacementNamed(context, MapScreen.id);
-                } else {
-                  if (kDebugMode) {
-                    print('Permission not allowed');
-                  }
-                }
+                Navigator.pushReplacementNamed(context, HomeScreen.id);
               },
-              child: Text(
-                _location != null ? 'Update Location' : 'Confirm Your Location',
-                style: const TextStyle(color: Colors.white),
-              ),
+              child: const Text('Confirm Your Location'),
             ),
+            _loading
+                ? const CircularProgressIndicator()
+                : TextButton(
+                    style: TextButton.styleFrom(
+                        elevation: 2, backgroundColor: const Color(0xFF84c225)),
+                    onPressed: () async {
+                      setState(() {
+                        _loading = true;
+                      });
+
+                      await locationProvider.getCurrentPosition();
+                      if (locationProvider.permissionAllowed == true) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushReplacementNamed(context, MapScreen.id);
+                      } else {
+                        Future.delayed(const Duration(seconds: 4), () {
+                          if (locationProvider.permissionAllowed == false) {
+                            if (kDebugMode) {
+                              print('Permission not allowed');
+                            }
+                            setState(() {
+                              _loading = false;
+                            });
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text(
+                                  'Please allow permission to find nearest stores for you'),
+                            ));
+                          }
+                        });
+                      }
+                    },
+                    child: const Text(
+                      'Set Your Location',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
           ],
         ),
       ),

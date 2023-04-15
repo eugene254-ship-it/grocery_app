@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:grocery_app/providers/auth_provider.dart';
 import 'package:grocery_app/providers/location_provider.dart';
+import 'package:grocery_app/providers/store_provider.dart';
 import 'package:grocery_app/screens/homeScreen.dart';
 import 'package:grocery_app/screens/landing_screen.dart';
 import 'package:grocery_app/screens/login_screen.dart';
@@ -26,6 +27,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => LocationProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => StoreProvider(),
         ),
       ],
       child: const MyApp(),

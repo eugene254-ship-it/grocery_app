@@ -139,8 +139,10 @@ class _MapScreenState extends State<MapScreen> {
                           child: Text(
                             locationData.loading
                                 ? 'Locating....'
-                                : locationData.selectedAddress?.name ??
-                                    'Choose location',
+                                : locationData.selectedAddress == null
+                                    ? 'Locating...'
+                                    : locationData.selectedAddress?.name ??
+                                        'Choose location',
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -155,7 +157,9 @@ class _MapScreenState extends State<MapScreen> {
                       child: Text(
                         locationData.loading
                             ? ''
-                            : locationData.selectedAddress?.street ?? '',
+                            : locationData.selectedAddress == null
+                                ? ''
+                                : locationData.selectedAddress?.street ?? '',
                         style: const TextStyle(color: Colors.black54),
                       ),
                     ),
