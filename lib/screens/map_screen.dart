@@ -22,11 +22,11 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  LatLng? currentLocation = const LatLng(-1.285790, 36.820030);
+  LatLng currentLocation = const LatLng(0.0, 0.0);
   late GoogleMapController mapController;
   bool locating = false;
   bool loggedIn = false;
-  User? user;
+  late User user;
 
   @override
   void initState() {
@@ -37,13 +37,11 @@ class _MapScreenState extends State<MapScreen> {
 
   void getCurrentUser() {
     setState(() {
-      user = FirebaseAuth.instance.currentUser;
+      user = FirebaseAuth.instance.currentUser!;
     });
-    if (user != null) {
-      setState(() {
-        loggedIn = true;
-      });
-    }
+    setState(() {
+      loggedIn = true;
+    });
   }
 
   @override
@@ -66,7 +64,7 @@ class _MapScreenState extends State<MapScreen> {
             GoogleMap(
               initialCameraPosition: currentLocation != null
                   ? CameraPosition(
-                      target: currentLocation!,
+                      target: currentLocation,
                       zoom: 14.4746,
                     )
                   : const CameraPosition(
@@ -93,6 +91,13 @@ class _MapScreenState extends State<MapScreen> {
                 locationData.getMoveCamera();
               },
             ),
+            if (locating)
+              const Center(
+                child: SpinKitPulse(
+                  color: Colors.black54,
+                  size: 100.0,
+                ),
+              ),
             Center(
               child: Container(
                 height: 50,
@@ -101,12 +106,6 @@ class _MapScreenState extends State<MapScreen> {
                   'assets/images/pin.png',
                   color: Colors.black,
                 ),
-              ),
-            ),
-            const Center(
-              child: SpinKitPulse(
-                color: Colors.black54,
-                size: 100.0,
               ),
             ),
             Positioned(
@@ -118,13 +117,13 @@ class _MapScreenState extends State<MapScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    locationData.loading
-                        ? const LinearProgressIndicator(
-                            backgroundColor: Colors.transparent,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.black),
-                          )
-                        : Container(),
+                    if (locationData.loading)
+                      const LinearProgressIndicator(
+                        backgroundColor: Colors.transparent,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                      )
+                    else
+                      Container(),
                     Padding(
                       padding: const EdgeInsets.only(left: 10, right: 20),
                       child: TextButton.icon(
@@ -186,12 +185,12 @@ class _MapScreenState extends State<MapScreen> {
                                       locationData.selectedAddress?.name ?? '';
                                 });
                                 if (kDebugMode) {
-                                  print(user!.uid);
+                                  print(user.uid);
                                 }
                                 auth
                                     .updateUser(
-                                  id: user!.uid,
-                                  number: user!.phoneNumber,
+                                  id: user.uid,
+                                  number: user.phoneNumber,
                                 )
                                     .then((value) {
                                   if (value == true) {
