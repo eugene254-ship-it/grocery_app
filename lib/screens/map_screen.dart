@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../providers/auth_provider.dart';
+import 'main_screen.dart';
 
 class MapScreen extends StatefulWidget {
   static const String id = 'map-screen';
@@ -187,16 +188,11 @@ class _MapScreenState extends State<MapScreen> {
                                 if (kDebugMode) {
                                   print(user.uid);
                                 }
-                                auth
-                                    .updateUser(
+                                auth.updateUser(
                                   id: user.uid,
                                   number: user.phoneNumber,
-                                )
-                                    .then((value) {
-                                  if (value == true) {
-                                    Navigator.pushNamed(context, HomeScreen.id);
-                                  }
-                                });
+                                );
+                                Navigator.pushNamed(context, MainScreen.id);
                               }
                             },
                             style: ButtonStyle(

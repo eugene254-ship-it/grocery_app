@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../providers/location_provider.dart';
 import '../screens/map_screen.dart';
@@ -46,7 +47,13 @@ class _MyAppBarState extends State<MyAppBar> {
         onPressed: () {
           locationData.getCurrentPosition();
           if (locationData.permissionAllowed == true) {
-            Navigator.pushNamed(context, MapScreen.id);
+            PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+              context,
+              settings: const RouteSettings(name: MapScreen.id),
+              screen: const MapScreen(),
+              withNavBar: false,
+              pageTransitionAnimation: PageTransitionAnimation.cupertino,
+            );
           } else {
             if (kDebugMode) {
               print('Permission not allowed');

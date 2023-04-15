@@ -11,7 +11,7 @@ import 'package:geocoding/geocoding.dart';
 
 import '../screens/homeScreen.dart';
 import '../screens/landing_screen.dart';
-import '../screens/map_screen.dart';
+import '../screens/main_screen.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -129,12 +129,8 @@ class AuthProvider with ChangeNotifier {
                               if ((snapShot.data()
                                       as Map<String, dynamic>)['address'] !=
                                   null) {
-                                if (Navigator.of(context).canPop()) {
-                                  Navigator.of(context).pop();
-                                }
-
                                 Navigator.pushReplacementNamed(
-                                    context, HomeScreen.id);
+                                    context, MainScreen.id);
                               }
                               Navigator.pushReplacementNamed(
                                   dialogContext, LandingScreen.id);
@@ -142,7 +138,7 @@ class AuthProvider with ChangeNotifier {
                               updateUser(
                                   id: user.uid, number: user.phoneNumber);
                               Navigator.pushReplacementNamed(
-                                  dialogContext, HomeScreen.id);
+                                  dialogContext, MainScreen.id);
                             }
                           } else {
                             createUser(id: user.uid, number: user.phoneNumber);

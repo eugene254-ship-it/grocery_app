@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/welcome_screen.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -13,7 +14,13 @@ class ProfileScreen extends StatelessWidget {
         child: const Text('sign Out'),
         onPressed: () {
           FirebaseAuth.instance.signOut();
-          Navigator.pushReplacementNamed(context, WelcomeScreen.id);
+          PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+            context,
+            settings: const RouteSettings(name: WelcomeScreen.id),
+            screen: const WelcomeScreen(),
+            withNavBar: false,
+            pageTransitionAnimation: PageTransitionAnimation.cupertino,
+          );
         },
       )),
     );
