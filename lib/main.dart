@@ -7,6 +7,7 @@ import 'package:grocery_app/providers/store_provider.dart';
 import 'package:grocery_app/screens/homeScreen.dart';
 import 'package:grocery_app/screens/landing_screen.dart';
 import 'package:grocery_app/screens/login_screen.dart';
+import 'package:grocery_app/screens/main_screen.dart';
 import 'package:grocery_app/screens/map_screen.dart';
 import 'package:grocery_app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
@@ -54,6 +55,7 @@ class MyApp extends StatelessWidget {
         MapScreen.id: (context) => const MapScreen(),
         LoginScreen.id: (context) => const LoginScreen(),
         LandingScreen.id: (context) => const LandingScreen(),
+        MainScreen.id: (context) => const MainScreen(),
       },
     );
   }

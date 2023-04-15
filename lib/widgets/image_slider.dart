@@ -45,7 +45,7 @@ class _ImageSliderState extends State<ImageSlider> {
                 return Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.only(top: 4),
                       child: CarouselSlider.builder(
                         itemCount: snapshot.data?.length ?? 0,
                         itemBuilder: (context, index, realIndex) {

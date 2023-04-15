@@ -39,7 +39,7 @@ class _MyAppBarState extends State<MyAppBar> {
   @override
   Widget build(BuildContext context) {
     final locationData = Provider.of<LocationProvider>(context);
-    return AppBar(
+    return SliverAppBar(
       automaticallyImplyLeading: false,
       elevation: 0.0,
       title: TextButton(
@@ -91,25 +91,6 @@ class _MyAppBarState extends State<MyAppBar> {
           ],
         ),
       ),
-      actions: [
-        IconButton(
-          icon: const Icon(
-            Icons.power_settings_new,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            FirebaseAuth.instance.signOut();
-            Navigator.pushReplacementNamed(context, WelcomeScreen.id);
-          },
-        ),
-        IconButton(
-          icon: const Icon(
-            Icons.account_circle_outlined,
-            color: Colors.white,
-          ),
-          onPressed: () {},
-        ),
-      ],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(56),
         child: Padding(

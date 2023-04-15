@@ -53,6 +53,7 @@ dependencies:
   cloud_firestore: ^4.5.1
   web3dart: ^2.6.1
   flutterflow_paginate_firestore: ^1.0.3+1
+  persistent_bottom_nav_bar: ^5.0.2
 
 dev_dependencies:
   flutter_test:

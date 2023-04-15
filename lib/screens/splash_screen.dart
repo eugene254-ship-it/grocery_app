@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/screens/landing_screen.dart';
+import 'package:grocery_app/screens/main_screen.dart';
 import 'package:grocery_app/screens/welcome_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -59,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
     prefs.setString('location', result['location'] as String);
     //after update prefs
     // ignore: use_build_context_synchronously
-    Navigator.pushReplacementNamed(context, HomeScreen.id);
+    Navigator.pushReplacementNamed(context, MainScreen.id);
   }
 
   @override
