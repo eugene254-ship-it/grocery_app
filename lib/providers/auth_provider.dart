@@ -23,8 +23,8 @@ class AuthProvider with ChangeNotifier {
   bool loading = false;
   LocationProvider locationData = LocationProvider();
   late String screen;
-  double latitude = -1.285790;
-  double longitude = 36.820030;
+  double latitude = 0.0;
+  double longitude = 0.0;
   String address = '';
   String location = '';
 
@@ -75,91 +75,103 @@ class AuthProvider with ChangeNotifier {
   Future<void> smsOtpDialog(BuildContext context, String number) async {
     String smsOtp = '';
     BuildContext dialogContext = context;
-    return showDialog(
-        context: dialogContext,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Column(
-              children: const [
-                Text('Verification Code'),
-                SizedBox(
-                  height: 6,
-                ),
-                Text(
-                  'Enter 6 digit OTP received as SMS',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-            content: SizedBox(
-              height: 85,
-              child: TextField(
-                textAlign: TextAlign.center,
-                keyboardType: TextInputType.number,
-                maxLength: 6,
-                onChanged: (value) {
-                  smsOtp = value;
-                },
+    return showDialog<void>(
+      context: dialogContext,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: Column(
+                children: const [
+                  Text('Verification Code'),
+                  SizedBox(
+                    height: 6,
+                  ),
+                  Text(
+                    'Enter 6 digit OTP received as SMS',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  try {
-                    PhoneAuthCredential phoneAuthCredential =
-                        PhoneAuthProvider.credential(
-                            verificationId: verificationId, smsCode: smsOtp);
+              content: SizedBox(
+                height: 85,
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  maxLength: 6,
+                  onChanged: (value) {
+                    setState(() {
+                      smsOtp = value;
+                    });
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    try {
+                      PhoneAuthCredential phoneAuthCredential =
+                          PhoneAuthProvider.credential(
+                              verificationId: verificationId, smsCode: smsOtp);
 
-                    final User? user =
-                        (await _auth.signInWithCredential(phoneAuthCredential))
-                            .user;
+                      final User? user = (await _auth
+                              .signInWithCredential(phoneAuthCredential))
+                          .user;
 
-                    if (user != null) {
-                      loading = false;
-                      notifyListeners();
+                      if (user != null) {
+                        loading = false;
+                        notifyListeners();
 
-                      _userServices.getUserById(user.uid).then((snapShot) {
-                        if (snapShot.exists) {
-                          if (screen == 'Login') {
-                            // need to check user data
-                            if ((snapShot.data()
-                                    as Map<String, dynamic>)['address'] !=
-                                null) {
+                        _userServices.getUserById(user.uid).then((snapShot) {
+                          if (snapShot.exists) {
+                            if (screen == 'Login') {
+                              // need to check user data
+                              if ((snapShot.data()
+                                      as Map<String, dynamic>)['address'] !=
+                                  null) {
+                                if (Navigator.of(context).canPop()) {
+                                  Navigator.of(context).pop();
+                                }
+
+                                Navigator.pushReplacementNamed(
+                                    context, HomeScreen.id);
+                              }
                               Navigator.pushReplacementNamed(
-                                  context, HomeScreen.id);
+                                  dialogContext, LandingScreen.id);
+                            } else {
+                              updateUser(
+                                  id: user.uid, number: user.phoneNumber);
+                              Navigator.pushReplacementNamed(
+                                  dialogContext, HomeScreen.id);
                             }
+                          } else {
+                            createUser(id: user.uid, number: user.phoneNumber);
                             Navigator.pushReplacementNamed(
                                 dialogContext, LandingScreen.id);
-                          } else {
-                            updateUser(id: user.uid, number: user.phoneNumber);
-                            Navigator.pushReplacementNamed(
-                                dialogContext, HomeScreen.id);
                           }
-                        } else {
-                          createUser(id: user.uid, number: user.phoneNumber);
-                          Navigator.pushReplacementNamed(
-                              dialogContext, LandingScreen.id);
+                        });
+                      } else {
+                        if (kDebugMode) {
+                          print('Login failed');
                         }
-                      });
-                    } else {
+                      }
+                    } catch (e) {
+                      error = 'Invalid OTP';
+                      notifyListeners();
                       if (kDebugMode) {
-                        print('Login failed');
+                        print(e.toString());
                       }
                     }
-                  } catch (e) {
-                    error = 'Invalid OTP';
-                    notifyListeners();
-                    if (kDebugMode) {
-                      print(e.toString());
-                    }
-                  }
-                  Navigator.of(dialogContext).pop();
-                },
-                child: const Text('DONE'),
-              ),
-            ],
-          );
-        }).whenComplete(() {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('DONE'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    ).whenComplete(() {
       loading = false;
       notifyListeners();
     });

@@ -47,88 +47,91 @@ class _TopPickStoreState extends State<TopPickStore> {
           }
           shopDistance.sort();
           if (shopDistance[0] > 10) {
-            return Container(
-              child: const Text('fdfdfdf'),
-            );
+            return Container();
           }
-          return Padding(
-            padding: const EdgeInsets.only(left: 8, right: 8),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 20),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                          height: 30,
-                          child: Image.asset('assets/images/like.gif')),
-                      const Text(
-                        'Top Picked Stores For You',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w900, fontSize: 18),
-                      ),
-                    ],
+          return SizedBox(
+            height: 200,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8, right: 8),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10, top: 20),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                            height: 30,
+                            child: Image.asset('assets/images/like.gif')),
+                        const Text(
+                          'Top Picked Stores For You',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Flexible(
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children:
-                        snapShot.data!.docs.map((DocumentSnapshot document) {
-                      if (double.parse(getDistance(document['location'])) <=
-                          10) {
-                        //shows stores in 10Km
-                        return Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: SizedBox(
-                            width: 80,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 80,
-                                  height: 80,
-                                  child: Card(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(4),
-                                      child: Image.network(
-                                        document['imageUrl'],
-                                        fit: BoxFit.cover,
+                  Expanded(
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: snapShot.data!.docs.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        DocumentSnapshot document = snapShot.data!.docs[index];
+                        if (double.parse(document['location'] ?? 0.0) <= 10) {
+                          //shows stores in 10Km
+                          return Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: SizedBox(
+                              width: 80,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 80,
+                                    height: 80,
+                                    child: Card(
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(4),
+                                        child: Image.network(
+                                          document['imageUrl'],
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 35,
-                                  child: Text(
-                                    document['shopName'],
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
+                                  SizedBox(
+                                    height: 35,
+                                    child: Text(
+                                      document['shopName'],
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                                Text(
-                                  '${getDistance(document['location'])}Km',
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 10,
+                                  Text(
+                                    '${getDistance(document['location'])}Km',
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 10,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      } else {
-                        //if no stores
-                        return Container();
-                      }
-                    }).toList(),
+                          );
+                        } else {
+                          //if no stores
+                          return Container();
+                        }
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         });

@@ -26,70 +26,73 @@ class _ImageSliderState extends State<ImageSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        FutureBuilder<List<QueryDocumentSnapshot>>(
-          future: getSliderImageFromDb(),
-          builder: (_, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasError) {
-              return const Center(
-                child: Text('Error loading slider images'),
-              );
-            } else {
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: CarouselSlider.builder(
-                      itemCount: snapshot.data?.length ?? 0,
-                      itemBuilder: (context, index, realIndex) {
-                        QueryDocumentSnapshot sliderImage =
-                            snapshot.data![index];
-                        Map<String, dynamic> getImage =
-                            sliderImage.data() as Map<String, dynamic>;
-                        return SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: Image.network(
-                            getImage['image'],
-                            fit: BoxFit.fill,
-                          ),
-                        );
-                      },
-                      options: CarouselOptions(
-                        viewportFraction: 1,
-                        initialPage: 0,
-                        autoPlay: true,
-                        height: 150,
-                        onPageChanged: (int i, carouselPageChangedReason) {
-                          setState(() {
-                            index = i;
-                          });
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: [
+          FutureBuilder<List<QueryDocumentSnapshot>>(
+            future: getSliderImageFromDb(),
+            builder: (_, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasError) {
+                return const Center(
+                  child: Text('Error loading slider images'),
+                );
+              } else {
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: CarouselSlider.builder(
+                        itemCount: snapshot.data?.length ?? 0,
+                        itemBuilder: (context, index, realIndex) {
+                          QueryDocumentSnapshot sliderImage =
+                              snapshot.data![index];
+                          Map<String, dynamic> getImage =
+                              sliderImage.data() as Map<String, dynamic>;
+                          return SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: Image.network(
+                              getImage['image'],
+                              fit: BoxFit.fill,
+                            ),
+                          );
                         },
+                        options: CarouselOptions(
+                          viewportFraction: 1,
+                          initialPage: 0,
+                          autoPlay: true,
+                          height: 150,
+                          onPageChanged: (int i, carouselPageChangedReason) {
+                            setState(() {
+                              index = i;
+                            });
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                  DotsIndicator(
-                    dotsCount: snapshot.data?.length ?? 0,
-                    position: index.toDouble(),
-                    decorator: DotsDecorator(
-                      size: const Size.square(5.0),
-                      activeSize: const Size(18.0, 5.0),
-                      activeShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0),
+                    DotsIndicator(
+                      dotsCount: snapshot.data?.length ?? 0,
+                      position: index.toDouble(),
+                      decorator: DotsDecorator(
+                        size: const Size.square(5.0),
+                        activeSize: const Size(18.0, 5.0),
+                        activeShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        activeColor: const Color(0xFF84c225),
                       ),
-                      activeColor: const Color(0xFF84c225),
                     ),
-                  ),
-                ],
-              );
-            }
-          },
-        ),
-      ],
+                  ],
+                );
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 }

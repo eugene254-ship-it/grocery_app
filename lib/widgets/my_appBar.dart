@@ -9,29 +9,30 @@ import '../providers/location_provider.dart';
 import '../screens/map_screen.dart';
 
 class MyAppBar extends StatefulWidget {
-  const MyAppBar({super.key});
+  const MyAppBar({Key? key}) : super(key: key);
 
   @override
-  State<MyAppBar> createState() => _MyAppBarState();
+  // ignore: library_private_types_in_public_api
+  _MyAppBarState createState() => _MyAppBarState();
 }
 
 class _MyAppBarState extends State<MyAppBar> {
   String location = '';
   String address = '';
-//Huge Location Access that needs to be fixed Bug Not Yet Fixed
+
   @override
   void initState() {
-    getPrefs();
     super.initState();
+    getPrefs();
   }
 
-  getPrefs() async {
+  Future<void> getPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? location = prefs.getString('location');
-    String? address = prefs.getString('address');
+    String? loc = prefs.getString('location');
+    String? add = prefs.getString('address');
     setState(() {
-      location = location;
-      address = address;
+      location = loc ?? '';
+      address = add ?? '';
     });
   }
 
@@ -79,7 +80,7 @@ class _MyAppBarState extends State<MyAppBar> {
                   // add function to handle onTap event here
                 },
                 child: Text(
-                  address == null
+                  address == ''
                       ? 'Press here to set Delivery Location'
                       : address,
                   overflow: TextOverflow.ellipsis,

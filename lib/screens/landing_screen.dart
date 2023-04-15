@@ -50,7 +50,7 @@ class _LandingScreenState extends State<LandingScreen> {
             SizedBox(
                 width: 600,
                 child: Image.asset(
-                  'assets/images/city.jpg',
+                  'assets/images/city.png',
                   fit: BoxFit.fill,
                   color: Colors.black12,
                 )),

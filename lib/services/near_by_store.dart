@@ -34,7 +34,7 @@ class NearByStores extends StatefulWidget {
 }
 
 class _NearByStoresState extends State<NearByStores> {
-  var userLocation = {'latitude': 37.7749, 'longitude': -122.4194};
+  var userLocation = {'latitude': '', 'longitude': ''};
 
   final StoreServices _storeServices = StoreServices();
   PaginateRefreshedChangeListener refreshChangeListener =
@@ -43,7 +43,6 @@ class _NearByStoresState extends State<NearByStores> {
   Widget build(BuildContext context) {
     final storeData = Provider.of<StoreProvider>(context);
     storeData.getUserLocationData(context);
-    final data = (document as QueryDocumentSnapshot).data();
 
     String getDistance(location, longitude) {
       var distance = Geolocator.distanceBetween(storeData.userLatitude,
@@ -53,8 +52,9 @@ class _NearByStoresState extends State<NearByStores> {
     }
 
     return Container(
+      color: Colors.white,
       child: StreamBuilder<QuerySnapshot>(
-        stream: _storeServices.getTopPickedStore(),
+        stream: _storeServices.getNearByStore(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapShot) {
           if (!snapShot.hasData) return const CircularProgressIndicator();
           List shopDistance = [];
@@ -73,11 +73,21 @@ class _NearByStoresState extends State<NearByStores> {
               color: Colors.red,
               child: Stack(
                 children: [
-                  const Center(
-                    child: Text(
-                      '**That\s all folks**',
-                      style: TextStyle(color: Colors.grey),
+                  const Padding(
+                    padding: EdgeInsets.only(
+                        bottom: 30, top: 30, left: 20, right: 20),
+                    child: SizedBox(
+                      child: Center(
+                        child: Text(
+                          'Currently we are not servicing this area,\nPlease Try another location',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(color: Colors.black54, fontSize: 20),
+                        ),
+                      ),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 40,
                   ),
                   Image.asset(
                     'assets/images/city.png',
@@ -96,7 +106,7 @@ class _NearByStoresState extends State<NearByStores> {
                               style: TextStyle(color: Colors.black54),
                             ),
                             Text(
-                              'JAMDEV',
+                              'Ginsky',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 2,
@@ -121,9 +131,13 @@ class _NearByStoresState extends State<NearByStores> {
                       refreshedChangeListener.refreshed = true;
                     },
                     child: PaginateFirestore(
-                        bottomLoader: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              Theme.of(context).primaryColor),
+                        bottomLoader: SizedBox(
+                          height: 30,
+                          width: 30,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).primaryColor),
+                          ),
                         ),
                         header: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +170,7 @@ class _NearByStoresState extends State<NearByStores> {
                         itemBuilderType: PaginateBuilderType.listView,
                         itemBuilder: (index, context, document) => Padding(
                               padding: const EdgeInsets.all(4),
-                              child: Container(
+                              child: SizedBox(
                                 width: MediaQuery.of(context as BuildContext)
                                     .size
                                     .width,
@@ -207,7 +221,7 @@ class _NearByStoresState extends State<NearByStores> {
                                         const SizedBox(
                                           height: 3,
                                         ),
-                                        Container(
+                                        SizedBox(
                                           width: MediaQuery.of(
                                                       context as BuildContext)
                                                   .size
@@ -251,11 +265,7 @@ class _NearByStoresState extends State<NearByStores> {
                                 ),
                               ),
                             ),
-                        query: FirebaseFirestore.instance
-                            .collection('vendors')
-                            .where('accVerified', isEqualTo: true)
-                            //  .where('isTopPicked', isEqualTo: true)
-                            .orderBy('shopName'),
+                        query: _storeServices.getNearByStorePagination(),
                         isLive: true,
                         listeners: [
                           refreshChangeListener,
@@ -277,7 +287,7 @@ class _NearByStoresState extends State<NearByStores> {
                               Positioned(
                                 right: 10.0,
                                 top: 80,
-                                child: Container(
+                                child: SizedBox(
                                     width: 100,
                                     child: Column(
                                       crossAxisAlignment:
@@ -289,7 +299,7 @@ class _NearByStoresState extends State<NearByStores> {
                                               TextStyle(color: Colors.black54),
                                         ),
                                         Text(
-                                          'JAMDEV',
+                                          'Ginsky',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               letterSpacing: 2,

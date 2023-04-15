@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/my_appBar.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
   static const String id = 'home-screen';
 
   @override
@@ -17,35 +17,41 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String location = '';
-//Huge Location Access that needs to be fixed Bug Not Yet Fixed
+  String? location;
+
   @override
   void initState() {
-    getPrefs();
     super.initState();
+    getPrefs();
   }
 
-  getPrefs() async {
+  Future<void> getPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? location = prefs.getString('location');
     setState(() {
-      location = location;
+      this.location = location;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context);
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(112),
         child: MyAppBar(),
       ),
       body: ListView(
-        children: const [
-          ImageSlider(),
-          SizedBox(height: 200, child: TopPickStore()),
-          NearByStores(),
+        children: [
+          const ImageSlider(),
+          Container(
+            color: Colors.white,
+            child: const TopPickStore(),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(top: 43),
+            child: NearByStores(),
+          ),
         ],
       ),
     );
