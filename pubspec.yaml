@@ -38,7 +38,7 @@ dependencies:
   dots_indicator: ^2.1.0
   equatable: ^2.0.5
   firebase_core: ^2.9.0
-  firebase_auth: ^4.4.0
+  firebase_auth: ^4.4.1
   provider: ^6.0.5
   google_maps_flutter: ^2.2.5
   geolocator: ^9.0.2
